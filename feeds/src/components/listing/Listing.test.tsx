@@ -1,3 +1,4 @@
+import { partialAsFull } from '@chainlink/ts-helpers'
 import React from 'react'
 import { MemoryRouter } from 'react-router-dom'
 import '@testing-library/jest-dom/extend-expect'
@@ -6,7 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 import createStore from '../../state/createStore'
 import { Listing } from './Listing'
 import { ListingGroup } from 'state/ducks/listing/selectors'
-import { FeedConfig } from 'feeds'
+import { FeedConfig } from 'config'
 
 const AllTheProviders: React.FC = ({ children }) => {
   const { store } = createStore()
@@ -21,35 +22,35 @@ const AllTheProviders: React.FC = ({ children }) => {
 const listingGroup1: ListingGroup = {
   name: 'List 1',
   feeds: [
-    {
+    partialAsFull<FeedConfig>({
       name: 'pair name 1',
       path: '/link',
-      valuePrefix: 'prefix ',
+      valuePrefix: '$',
       sponsored: ['sponsor 1', 'sponsor 2'],
-    } as FeedConfig,
-    {
+    }),
+    partialAsFull<FeedConfig>({
       name: 'pair name 2',
       path: '/link2',
-      valuePrefix: 'prefix2',
+      valuePrefix: '$',
       sponsored: ['sponsor 1', 'sponsor 2'],
-    } as FeedConfig,
+    }),
   ],
 }
 const listingGroup2 = {
   name: 'List 2',
   feeds: [
-    {
+    partialAsFull<FeedConfig>({
       name: 'pair name 3',
       path: '/link',
-      valuePrefix: 'prefix',
+      valuePrefix: '$',
       sponsored: ['sponsor 1', 'sponsor 2'],
-    } as FeedConfig,
-    {
+    }),
+    partialAsFull<FeedConfig>({
       name: 'pair name 4',
       path: '/link2',
-      valuePrefix: 'prefix2',
+      valuePrefix: '$',
       sponsored: ['sponsor 1', 'sponsor 2'],
-    } as FeedConfig,
+    }),
   ],
 }
 const listingGroups: ListingGroup[] = [listingGroup1, listingGroup2]
@@ -59,9 +60,8 @@ describe('components/listing/Listing', () => {
     const { container } = render(
       <AllTheProviders>
         <Listing
-          groups={listingGroups}
-          fetchAnswers={() => {}}
-          fetchHealthStatus={() => {}}
+          feedGroups={listingGroups}
+          fetchFeeds={() => {}}
           enableHealth={false}
           compareOffchain={false}
         />
@@ -76,9 +76,8 @@ describe('components/listing/Listing', () => {
     const { container } = render(
       <AllTheProviders>
         <Listing
-          groups={listingGroups}
-          fetchAnswers={() => {}}
-          fetchHealthStatus={() => {}}
+          feedGroups={listingGroups}
+          fetchFeeds={() => {}}
           enableHealth={false}
           compareOffchain={false}
         />
@@ -95,9 +94,8 @@ describe('components/listing/Listing', () => {
     const { container } = render(
       <AllTheProviders>
         <Listing
-          groups={listingGroups}
-          fetchAnswers={() => {}}
-          fetchHealthStatus={() => {}}
+          feedGroups={listingGroups}
+          fetchFeeds={() => {}}
           enableHealth={false}
           compareOffchain={false}
         />

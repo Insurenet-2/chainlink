@@ -1,47 +1,52 @@
+import { DispatchBinding } from '@chainlink/ts-helpers'
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import { connect, MapStateToProps } from 'react-redux'
 import { Row } from 'antd'
-import { FeedConfig } from 'config'
 import GridItem from './GridItem'
 import { AppState } from 'state'
 import { listingOperations, listingSelectors } from '../../state/ducks/listing'
 
-interface Props {
-  groups: listingSelectors.ListingGroup[]
-  feeds: FeedConfig[]
-  fetchAnswers: any
-  fetchHealthStatus: any
+interface OwnProps {
   enableHealth: boolean
   compareOffchain: boolean
 }
 
+interface StateProps {
+  feedGroups: listingSelectors.ListingGroup[]
+}
+
+interface DispatchProps {
+  fetchFeeds: DispatchBinding<typeof listingOperations.fetchFeeds>
+  /* fetchHealthStatus: any */
+}
+
+interface Props extends OwnProps, StateProps, DispatchProps {}
+
 export const Listing: React.FC<Props> = ({
-  feeds,
-  fetchAnswers,
-  fetchHealthStatus,
-  groups,
+  fetchFeeds,
+  feedGroups,
   compareOffchain,
   enableHealth,
 }) => {
   useEffect(() => {
-    fetchAnswers(feeds)
-  }, [fetchAnswers, feeds])
-  useEffect(() => {
-    if (enableHealth) {
-      fetchHealthStatus(groups)
-    }
-  }, [enableHealth, fetchHealthStatus, groups])
+    fetchFeeds()
+  }, [fetchFeeds])
+  /* useEffect(() => { */
+  /*   if (enableHealth) { */
+  /*     fetchHealthStatus(groups) */
+  /*   } */
+  /* }, [enableHealth, fetchHealthStatus, groups]) */
 
   return (
     <div className="listing">
-      {groups.map(group => (
-        <div className="listing-grid__group" key={group.name}>
+      {feedGroups.map(g => (
+        <div className="listing-grid__group" key={g.name}>
           <h3 className="listing-grid__header">
-            Decentralized Price Reference Data for {group.name} Pairs
+            Decentralized Price Reference Data for {g.name} Pairs
           </h3>
 
           <Row gutter={18} className="listing-grid">
-            {group.feeds.map(f => (
+            {g.feeds.map(f => (
               <GridItem
                 key={f.name}
                 feed={f}
@@ -56,16 +61,19 @@ export const Listing: React.FC<Props> = ({
   )
 }
 
-const mapStateToProps = (state: AppState) => {
-  const groups = listingSelectors.groups(state)
-  const feeds = groups.flatMap(g => g.feeds)
-
-  return { feeds, groups }
+const mapStateToProps: MapStateToProps<
+  StateProps,
+  OwnProps,
+  AppState
+> = state => {
+  return {
+    feedGroups: listingSelectors.feedGroups(state),
+  }
 }
 
 const mapDispatchToProps = {
-  fetchAnswers: listingOperations.fetchAnswers,
-  fetchHealthStatus: listingOperations.fetchHealthStatus,
+  fetchFeeds: listingOperations.fetchFeeds,
+  /* fetchHealthStatus: listingOperations.fetchHealthStatus, */
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Listing)
