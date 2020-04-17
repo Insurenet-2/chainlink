@@ -17,7 +17,6 @@ interface StateProps {
 
 interface DispatchProps {
   fetchFeeds: DispatchBinding<typeof listingOperations.fetchFeeds>
-  /* fetchHealthStatus: any */
 }
 
 interface Props extends OwnProps, StateProps, DispatchProps {}
@@ -31,11 +30,6 @@ export const Listing: React.FC<Props> = ({
   useEffect(() => {
     fetchFeeds()
   }, [fetchFeeds])
-  /* useEffect(() => { */
-  /*   if (enableHealth) { */
-  /*     fetchHealthStatus(groups) */
-  /*   } */
-  /* }, [enableHealth, fetchHealthStatus, groups]) */
 
   return (
     <div className="listing">
@@ -73,7 +67,6 @@ const mapStateToProps: MapStateToProps<
 
 const mapDispatchToProps = {
   fetchFeeds: listingOperations.fetchFeeds,
-  /* fetchHealthStatus: listingOperations.fetchHealthStatus, */
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Listing)
